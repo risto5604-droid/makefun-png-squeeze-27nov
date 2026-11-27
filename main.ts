@@ -397,13 +397,18 @@ function encodeInstance(rgba, width, height) {
 }
 
 // ---- Main ----------------------------------------------------------------------
+// Paths come from the harness when it grades locally (MAKEFUN_INPUT_DIR /
+// MAKEFUN_OUTPUT_DIR) and default to the sandbox paths /input and /output.
+// They only choose where files live; the bytes written never depend on them.
 function main() {
+  const inputDir = process.env.MAKEFUN_INPUT_DIR || '/input';
+  const outputDir = process.env.MAKEFUN_OUTPUT_DIR || '/output';
   const ids = ['i001', 'i002', 'i003', 'i004', 'i005', 'i006', 'i007', 'i008'];
   for (const id of ids) {
-    const input = fs.readFileSync(path.join('/input', id, 'image.png'));
+    const input = fs.readFileSync(path.join(inputDir, id, 'image.png'));
     const { width, height, rgba } = decodePng(input);
     const png = encodeInstance(rgba, width, height);
-    const outDir = path.join('/output', id);
+    const outDir = path.join(outputDir, id);
     fs.mkdirSync(outDir, { recursive: true });
     fs.writeFileSync(path.join(outDir, 'image.png'), png);
   }
